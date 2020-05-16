@@ -95,6 +95,7 @@ ansible-playbook -i inventory.yml playbooks/all.yml -u root --key-file=/path/to/
 
 # Result
 
+```sh
 $ curl -v -X POST http://188.166.55.218:8084/v1/health/check
 *   Trying 188.166.55.218:8084...
 * TCP_NODELAY set
@@ -115,6 +116,7 @@ $ curl -v -X POST http://188.166.55.218:8084/v1/health/check
 < 
 {"last_check":"2020-05-16 21:50:24","version":"1.40"}
 * Connection #0 to host 188.166.55.218 left intact
+```
 
 # Notes 
 
