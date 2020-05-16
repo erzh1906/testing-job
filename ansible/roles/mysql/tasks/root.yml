@@ -26,7 +26,7 @@
         paths: '{{ mysql_datadir }}'
         patterns: 'ib_logfile*'
       register: innodb_log
-    
+
     - name: Remove default InnoDB log files
       file:
         path: '{{ idb_log.path }}'
@@ -79,7 +79,7 @@
         paths: '{{ mysql_datadir }}'
         patterns: 'ib_logfile*'
       register: innodb_log
-    
+
     - name: Remove default InnoDB log files
       file:
         path: '{{ idb_log.path }}'
