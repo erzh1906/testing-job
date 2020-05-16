@@ -7,6 +7,7 @@
     login_user: root
     login_password: "{{ mysql_root_password }}"
   loop: "{{ mysql_databases | flatten(1) }}"
+  no_log: true
 
 - name: Create database owners (users with full permissions on specified database)
   mysql_user:
