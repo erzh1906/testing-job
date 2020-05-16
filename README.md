@@ -12,6 +12,11 @@ cd testing-job
 pip install -r requirements.txt
 ```
 
+# Warning:
+
+By default DigitalOcean mounts volume to `/mnt/volumename`
+You must consider that when specifying `mysql_datadir` Ansible variable
+
 # 1. Terraform
 
 Change working directory
