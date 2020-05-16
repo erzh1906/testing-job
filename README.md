@@ -15,7 +15,8 @@ pip install -r requirements.txt
 # Warning:
 
 By default DigitalOcean mounts volume to `/mnt/volumename`
-You must consider that when specifying `mysql_datadir` Ansible variable
+You must consider that when specifying `mysql_datadir` Ansible variable.
+I recommend to check `ansible_mounts` fact before specifying `mysql_datadir`
 
 # 1. Terraform
 
@@ -35,7 +36,9 @@ terraform apply -var-file="main.tfvars"
 **Variables:**
   - `main_config:` Global variables for your Terraform managed infrastructure
     - `token:` DigitalOcean API token. Default `1234`
+    - `ssh_name:` name of SSH key. Default `main`
     - `public_key:` your SSH public key. Default `ssh-rsa abcdef`.
+    - `vpc_name:` name of VPC. Default `main-project-network`
     - `region:` DigitalOcean region. Default `ams3`
     - `vpc_cidr:` IP address range for your VPC. Default `172.16.0.0/16`
   - `app_config:` Configuration for application droplets
@@ -46,6 +49,7 @@ terraform apply -var-file="main.tfvars"
     - `image:` DigitalOcean image ID or image slug. Default `centos-7-x64`
     - `size:` droplet size slug. Default `s-2vcpu-4gb`
   - `volume_config:`
+    - `name:` volume name. Default `dbdata`
     - `size:` volume size in Gb. Default `50`
     - `fs_type:` volume filesystem type. `ext4` and `xfs` available. Default `xfs`
 

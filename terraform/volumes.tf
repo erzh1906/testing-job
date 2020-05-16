@@ -1,6 +1,6 @@
 resource "digitalocean_volume" "db_data" {
   region                  = var.main_config.region
-  name                    = "dbdata"
+  name                    = var.volume_config.name
   size                    = var.volume_config.size
   initial_filesystem_type = var.volume_config.fs_type
   description             = "volume for database data"

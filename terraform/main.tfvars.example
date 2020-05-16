@@ -1,6 +1,8 @@
 main_config = {
     token       = "1234"
+    ssh_name    = "main"
     public_key  = "ssh-rsa abcdef"
+    vpc_name    = "main-project-network"
     region      = "ams3"
     vpc_cidr    = "172.16.0.0/16"
 }
@@ -17,6 +19,7 @@ db_config = {
 }
 
 volume_config = {
+    name          = "dbdata"
     size          = 50
     fs_type       = "xfs"
 }
