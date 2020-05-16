@@ -1,0 +1,16 @@
+[Unit]
+Description=IMHIO Ltd TCG server
+After=network.target
+
+[Service]
+Type=simple
+User=tcg
+Group=tcg
+ExecStart=/usr/bin/tcg -config=/etc/tcg/tcg.json
+Restart=always
+StartLimitInterval=10
+StartLimitBurst=5
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

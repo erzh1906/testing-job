@@ -1,0 +1,5 @@
+---
+
+- import_playbook: init.yml
+- import_playbook: mysql.yml
+- import_playbook: application.yml

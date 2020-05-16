@@ -1,0 +1,4 @@
+---
+# handlers file for tcg-role
+- name: restart tcg
+  include_tasks: restart_tcg.yml

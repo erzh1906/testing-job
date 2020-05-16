@@ -1,0 +1,150 @@
+---
+
+- name: Reset MySQL root password
+  block:
+    - name: Check mysql version
+      mysql_variables:
+        variable: version
+        login_user: root
+        login_password: '{{ mysql_root_password }}'
+      register: register_mysql_version
+      become: true
+
+    - name: Debug register_mysql_version
+      debug:
+        var: register_mysql_version
+
+  rescue:
+    - name: Stop MySQL server
+      systemd:
+        name: mysqld
+        state: stopped
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Find InnoDB log files
+      find:
+        paths: '{{ mysql_datadir }}'
+        patterns: 'ib_logfile*'
+      register: innodb_log
+    
+    - name: Remove default InnoDB log files
+      file:
+        path: '{{ idb_log.path }}'
+        state: absent
+      loop: '{{ innodb_log.files }}'
+      loop_control:
+        loop_var: idb_log
+
+    - name: Upload MySQL configuration with skip-grant-tables mode
+      template:
+        src: reset_root.cnf.j2
+        dest: /etc/my.cnf
+
+    - name: Start MySQL server
+      systemd:
+        name: mysqld
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Wait for MySQL server become ready
+      wait_for:
+        host: 127.0.0.1
+        port: 3306
+        timeout: 300
+        delay: 10
+
+    - name: Copy reset.sql for root reset
+      template:
+        src: reset_root.sql.j2
+        dest: /tmp/reset.sql
+        force: true
+
+    - name: Reset root credentials
+      mysql_db:
+        name: mysql
+        state: import
+        target: /tmp/reset.sql
+      become: true
+
+    - name: Stop MySQL server
+      systemd:
+        name: mysqld
+        state: stopped
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Find InnoDB log files
+      find:
+        paths: '{{ mysql_datadir }}'
+        patterns: 'ib_logfile*'
+      register: innodb_log
+    
+    - name: Remove default InnoDB log files
+      file:
+        path: '{{ idb_log.path }}'
+        state: absent
+      loop: '{{ innodb_log.files }}'
+      loop_control:
+        loop_var: idb_log
+
+    - name: Upload normal MySQL configuration file
+      template:
+        src: my.cnf.j2
+        dest: /etc/my.cnf
+        backup: yes
+
+    - name: Remove file reset.sql
+      file:
+        path: /tmp/reset.sql
+        state: absent
+
+    - name: Start MySQL server
+      systemd:
+        name: mysqld
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Wait for MySQL server become ready
+      wait_for:
+        host: 127.0.0.1
+        port: 3306
+        timeout: 300
+        delay: 10
+
+- name: Set root password for localhosts
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    state: present
+    host: "{{ item }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  loop:
+    - 127.0.0.1
+    - ::1
+
+- name: Remove root user with ansible_nodename host
+  mysql_user:
+    name: root
+    state: absent
+    host: "{{ ansible_nodename }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Remove anonymous users
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Remove test database
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"

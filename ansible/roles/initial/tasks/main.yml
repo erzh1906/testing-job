@@ -1,0 +1,59 @@
+---
+# tasks file for initial
+- name: Install firewalld
+  yum:
+    name: firewalld
+    state: present
+    update_cache: yes
+
+- name: Start and enable firewalld
+  systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Add default interface to public zone
+  firewalld:
+    interface: "{{ ansible_default_ipv4.interface }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+
+- name: Open 22/TCP port for allowed cidrs
+  firewalld:
+    rich_rule: 'rule family="ipv4" source address="{{ item }}" port port="22" protocol="tcp" accept'
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  loop: '{{ initial_ssh_allowed_cidrs }}'
+
+- name: Disable ssh service from firewalld
+  firewalld:
+    service: ssh
+    permanent: yes
+    state: disabled
+    immediate: yes
+    zone: public
+
+- name: Get list of VPC interfaces
+  set_fact:
+    initial_role_fact_vpc_interfaces: "{{ ansible_interfaces | difference(['lo', ansible_default_ipv4.interface]) }}"
+
+- name: Add VPC interface to trusted zone
+  firewalld:
+    interface: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: trusted
+  loop: '{{ initial_role_fact_vpc_interfaces }}'
+
+- name: Add zone configuration to network-scripts (to persist trusted zone across reboots https://access.redhat.com/discussions/1455033)
+  lineinfile:
+    path: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
+    regexp: '^ZONE='
+    line: ZONE=trusted
+  loop: '{{ initial_role_fact_vpc_interfaces }}'

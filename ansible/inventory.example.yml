@@ -1,0 +1,39 @@
+---
+
+all:
+  hosts:
+    app-01:
+      ansible_host: 1.1.1.1
+    database:
+      ansible_host: 2.2.2.2
+  children:
+    application:
+      hosts:
+        app-01:
+    mysql:
+      hosts:
+        database:
+  vars:
+    #defaults file for initial
+    initial_ssh_allowed_cidrs:
+      - 0.0.0.0/0
+    # defaults file for mysql
+    mysql_version: 5.7.30
+    mysql_server_id: 1
+    mysql_datadir: /mnt/dbdata/mysql
+    mysql_max_connections: 100
+    mysql_sql_mode: ""
+    mysql_innodb_buffer_pool_instances: 4
+    mysql_innodb_buffer_pool_size: 128M
+    mysql_innodb_log_file_size: 64M
+    mysql_default_collation: utf8_general_ci
+    mysql_root_password: 35eTYXsN<wP>>Z=qm
+    mysql_databases:
+      - db_name: tcg_db
+        db_user: tcg_user
+        db_password: GdacsV=_>8m<=T
+    # defaults file for tcg-role
+    tcg_mysql_host: 172.16.0.2
+    tcg_mysql_user: tcg_user
+    tcg_mysql_database: tcg_db
+    tcg_mysql_password: GdacsV=_>8m<=T

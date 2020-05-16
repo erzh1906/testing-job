@@ -1,0 +1,50 @@
+---
+# tasks file for tcg-role
+- name: Get package facts
+  package_facts:
+    manager: auto
+
+- name: Open 8084/tcp port
+  firewalld:
+    port: 8084/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+  when: "'firewalld' in ansible_facts.packages"
+
+- name: Install IMHIO Ltd tcg package
+  yum:
+    name: https://cloud.imhio.com/s/aDH5ktf99CG7k8D/download
+    state: present
+  notify: restart tcg
+
+- name: Upload tcg main config
+  template:
+    src: tcg.json.j2
+    dest: /etc/tcg/tcg.json
+    backup: yes
+    mode: 0400
+    owner: tcg
+    group: tcg
+  notify: restart tcg
+
+- name: Upload tcg systemd config
+  copy:
+    src: tcg.service
+    dest: /etc/systemd/system/tcg.service
+  notify: restart tcg
+
+- name: Start and enable tcg service
+  systemd:
+    name: tcg
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Wait for tcg service become ready
+  wait_for:
+    host: 127.0.0.1
+    port: 8084
+    timeout: 300
+    delay: 10

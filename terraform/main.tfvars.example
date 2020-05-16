@@ -1,0 +1,22 @@
+main_config = {
+    token       = "1234"
+    public_key  = "ssh-rsa abcdef"
+    region      = "ams3"
+    vpc_cidr    = "172.16.0.0/16"
+}
+
+app_config = {
+    count         = 1
+    image         = "centos-7-x64"
+    size          = "s-2vcpu-4gb"
+}
+
+db_config = {
+    image         = "centos-7-x64"
+    size          = "s-2vcpu-4gb"
+}
+
+volume_config = {
+    size          = 50
+    fs_type       = "xfs"
+}

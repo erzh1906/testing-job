@@ -1,0 +1,6 @@
+.terraform/*
+*.tfstate*
+main.tfvars
+inventory.yml
+hosts
+__pycache__

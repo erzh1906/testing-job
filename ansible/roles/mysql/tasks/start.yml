@@ -1,0 +1,15 @@
+---
+
+- name: Start and enable MySQL server
+  systemd:
+    name: mysqld
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Wait for MySQL server become ready
+  wait_for:
+    host: 127.0.0.1
+    port: 3306
+    timeout: 300
+    delay: 10

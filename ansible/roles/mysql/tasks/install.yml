@@ -1,0 +1,50 @@
+---
+
+- name: Install MySQL repository
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
+    state: present
+    update_cache: yes
+
+- name: Disable MySQL 8.0 repository (enabled by default)
+  yum_repository:
+    name: mysql80-community
+    description: "MySQL 8.0 Community Server"
+    file: mysql-community
+    baseurl: http://repo.mysql.com/yum/mysql-8.0-community/el/7/$basearch/
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+    gpgcheck: yes
+    enabled: no
+
+- name: Enable MySQL 5.7 repository (disabled by default)
+  yum_repository:
+    name: mysql57-community
+    description: "MySQL 5.7 Community Server"
+    file: mysql-community
+    baseurl: http://repo.mysql.com/yum/mysql-5.7-community/el/7/$basearch/
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+    gpgcheck: yes
+    enabled: yes
+
+- name: Install packages
+  yum:
+    name:
+      - MySQL-python
+      - mysql-community-common-{{ mysql_version }}
+      - mysql-community-client-{{ mysql_version }}
+      - mysql-community-server-{{ mysql_version }}
+      - mysql-community-libs-{{ mysql_version }}
+      - mysql-community-libs-compat-{{ mysql_version }}
+    state: present
+    update_cache: yes
+  notify: restart mysqld
+
+- name: Create MySQL data dir
+  file:
+    path: "{{ mysql_datadir }}"
+    state: directory
+    mode: 0755
+    owner: mysql
+    group: mysql
+    seuser: system_u
+    setype: mysqld_db_t

@@ -1,0 +1,6 @@
+---
+
+- name: Setup MySQL 5.7 server
+  hosts: mysql
+  roles:
+    - mysql

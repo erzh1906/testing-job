@@ -1,0 +1,6 @@
+---
+# defaults file for tcg-role
+tcg_mysql_host: 127.0.0.1
+tcg_mysql_user: tcg_user
+tcg_mysql_database: tcg_db
+tcg_mysql_password: tcg_password

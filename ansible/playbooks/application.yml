@@ -1,0 +1,6 @@
+---
+
+- name: Setup application server
+  hosts: application
+  roles:
+    - tcg-role

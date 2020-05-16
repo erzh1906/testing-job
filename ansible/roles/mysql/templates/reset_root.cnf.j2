@@ -1,0 +1,58 @@
+[mysqld]
+default_authentication_plugin = mysql_native_password
+skip-show-database
+skip-grant-tables
+
+server-id 						= {{ mysql_server_id }}
+
+skip-name-resolve
+
+datadir							= {{ mysql_datadir }}
+binlog_format                   = ROW
+log_bin                 		= mysql-bin
+expire_logs_days        		= 3
+default_storage_engine  		= InnoDB
+bind-address                    = "0.0.0.0"
+max_connections                 = {{ mysql_max_connections }}
+max_allowed_packet      		= 1G
+sql_mode                        = "{{ mysql_sql_mode }}"
+report_host                     = {{ ansible_nodename }}
+
+gtid_mode                       = on
+enforce_gtid_consistency		= true
+log_slave_updates               = true
+
+# InnoDB
+
+innodb_buffer_pool_instances    = {{ mysql_innodb_buffer_pool_instances }}
+innodb_buffer_pool_size         = {{ mysql_innodb_buffer_pool_size }}
+innodb_log_file_size            = {{ mysql_innodb_log_file_size }}
+innodb_log_buffer_size          = 128M
+innodb_file_per_table           = ON
+innodb_flush_method             = O_DIRECT
+innodb_flush_log_at_trx_commit  = 1
+innodb_autoinc_lock_mode        = 2
+innodb_temp_data_file_path      = ibtmp1:12M:autoextend:max:1G
+innodb_monitor_enable           = all
+
+# Caches
+
+query_cache_type                = 0
+query_cache_size                = 0
+query_cache_min_res_unit        = 2K
+thread_cache_size               = 25
+tmp_table_size                  = 2048M
+max_heap_table_size             = 2048M
+sort_buffer_size                = 16M
+join_buffer_size                = 16M
+read_buffer_size                = 256K
+read_rnd_buffer_size            = 256K
+table_definition_cache          = 2048
+table_open_cache                = 4096
+binlog_cache_size               = 16M
+
+character-set-server           	= utf8
+collation-server               	= {{ mysql_default_collation }}
+
+log-error                       = /var/log/mysqld.log
+pid-file                        = /var/run/mysqld/mysqld.pid

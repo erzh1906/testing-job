@@ -1,0 +1,22 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: leandelivery/docker-systemd:centos7
+    pre_build_image: true
+    privileged: true
+provisioner:
+  name: ansible
+verifier:
+  name: testinfra
+  options:
+    verbose: true
+  directory: ../resources/tests/
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8

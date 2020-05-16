@@ -1,0 +1,16 @@
+---
+# defaults file for mysql
+mysql_version: 5.7.30
+mysql_server_id: 1
+mysql_datadir: /var/lib/mysql
+mysql_max_connections: 100
+mysql_sql_mode: ""
+mysql_innodb_buffer_pool_instances: 4
+mysql_innodb_buffer_pool_size: 128M
+mysql_innodb_log_file_size: 64M
+mysql_default_collation: utf8_general_ci
+mysql_root_password: 35eTYXsN<wP>>Z=qm
+mysql_databases:
+  - db_name: tcg_db
+    db_user: tcg_user
+    db_password: GdacsV=_>8m<=T

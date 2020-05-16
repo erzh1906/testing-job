@@ -1,0 +1,21 @@
+---
+
+- name: Create databases
+  mysql_db:
+    name: "{{ item.db_name }}"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  loop: "{{ mysql_databases | flatten(1) }}"
+
+- name: Create database owners (users with full permissions on specified database)
+  mysql_user:
+    name: "{{ item.db_user }}"
+    password: "{{ item.db_password }}"
+    host: '%'
+    priv: '{{ item.db_name }}.*:ALL,GRANT'
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  loop: "{{ mysql_databases | flatten(1) }}"
+  no_log: true

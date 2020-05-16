@@ -1,0 +1,36 @@
+---
+
+- name: Stop MySQL server
+  systemd:
+    name: mysqld
+    state: stopped
+    enabled: yes
+    daemon_reload: yes
+
+- name: Find InnoDB log files
+  find:
+    paths: '{{ mysql_datadir }}'
+    patterns: 'ib_logfile*'
+  register: innodb_log
+
+- name: Remove default InnoDB log files
+  file:
+    path: '{{ idb_log.path }}'
+    state: absent
+  loop: '{{ innodb_log.files }}'
+  loop_control:
+    loop_var: idb_log
+
+- name: Start MySQL server
+  systemd:
+    name: mysqld
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Wait for MySQL server become ready
+  wait_for:
+    host: 127.0.0.1
+    port: 3306
+    timeout: 300
+    delay: 10
